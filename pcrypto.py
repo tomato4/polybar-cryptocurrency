@@ -20,11 +20,12 @@ args = parser.parse_args()
 home = os.path.expanduser("~/")
 
 unicode_dict = {}
-with open(f"{home}.config/polybar/coins.svg", "r", encoding="utf-8") as icons:
+with open(f"{home}.config/polybar/modules_binary/polybar-cryptocurrency/coins.svg", "r", encoding="utf-8") as icons:
     for line in icons:
         unicode, coin = line.strip().split(":")
         unicode_dict[unicode] = coin
 
+sys.stdout.write(" ")
 
 for coin in args.coins:
     get = requests.get(
@@ -37,8 +38,8 @@ for coin in args.coins:
         if _coin == coin:
             icon = chr(int(_unicode, 16)) if len(_unicode) > 1 else _unicode
             if args.display == "price":
-                sys.stdout.write(f" {icon} {current_price} ")
+                sys.stdout.write(f"{icon} {current_price} ")
             if args.display == "percentage":
-                sys.stdout.write(f"  {icon} {change:+}% ")
+                sys.stdout.write(f"{icon} {change:+}% ")
             if args.display == "both":
-                sys.stdout.write(f" {icon} {current_price} | {change:+}% ")
+                sys.stdout.write(f"{icon} {current_price} ({change:+}%) ")
