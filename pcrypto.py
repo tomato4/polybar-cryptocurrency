@@ -28,8 +28,12 @@ with open(f"{home}.config/polybar/modules_binary/polybar-cryptocurrency/coins.sv
 sys.stdout.write(" ")
 
 for coin in args.coins:
-    get = requests.get(
-        f"https://api.coinranking.com/v1/public/coins?prefix={coin}&base={args.base}").json()["data"]
+    try:
+        get = requests.get(
+            f"https://api.coinranking.com/v1/public/coins?prefix={coin}&base={args.base}").json()["data"]
+    except requests.ConnectionError:
+        print(" ")
+        exit()
     price_float = round(float(get["coins"][0]["price"]), args.decimals)
     current_price = get["base"]["sign"] + str(price_float)
     change = get["coins"][0]["change"]
