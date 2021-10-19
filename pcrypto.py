@@ -30,20 +30,19 @@ sys.stdout.write(" ")
 for coin in args.coins:
     try:
         get = requests.get(
-            f"https://api.coinranking.com/v1/public/coins?prefix={coin}&base={args.base}").json()["data"]
+            f"https://api.coingecko.com/api/v3/coins/markets?vs_currency={args.base}&ids={coin}").json()[0]
     except requests.ConnectionError:
         print(" ")
         exit()
-    price_float = round(float(get["coins"][0]["price"]), args.decimals)
-    current_price = get["base"]["sign"] + str(price_float)
-    change = get["coins"][0]["change"]
+    price = str(round(float(get["current_price"]), args.decimals))
+    change = round(float(get["price_change_percentage_24h"]), 2)
 
     for _unicode, _coin in unicode_dict.items():
-        if _coin == coin:
+        if _coin == get["symbol"]:
             icon = chr(int(_unicode, 16)) if len(_unicode) > 1 else _unicode
             if args.display == "price":
-                sys.stdout.write(f"{icon} {current_price} ")
+                sys.stdout.write(f"{icon} {price} ")
             if args.display == "percentage":
                 sys.stdout.write(f"{icon} {change:+}% ")
             if args.display == "both":
-                sys.stdout.write(f"{icon} {current_price} ({change:+}%) ")
+                sys.stdout.write(f"{icon} {price} ({change:+}%) ")
